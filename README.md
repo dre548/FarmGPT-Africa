@@ -1,1 +1,0 @@
-# FarmGPT-Africa
