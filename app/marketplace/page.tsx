@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useContext } from "react";
-import { ShoppingCart, PackageOpen, Truck, Leaf, Loader2, MapPin, CheckCircle2, X, Wallet, Banknote, Calendar } from "lucide-react";
+import { ShoppingCart, PackageOpen, Truck, Leaf, Loader2, MapPin, CheckCircle2, X, Wallet, Banknote, Calendar, Upload } from "lucide-react";
 import { LanguageContext } from "../layout";
 
 export default function Marketplace() {
@@ -14,7 +14,11 @@ export default function Marketplace() {
   const [paymentMethod, setPaymentMethod] = useState<"mpesa" | "mdogomdogo" | "sacco">("mpesa");
   const [deposit, setDeposit] = useState(1000);
   const [months, setMonths] = useState(3);
-  const cartTotal = 4500; // Hardcoded cart total for the example
+  
+  // Marketplace Additions State
+  const [cartTotal, setCartTotal] = useState(4500); 
+  const [selectedItemName, setSelectedItemName] = useState("Organic Manure");
+  const [sellSuccess, setSellSuccess] = useState(false);
 
   const monthlyPayment = Math.max(0, (cartTotal - deposit) / months).toFixed(0);
 
@@ -23,20 +27,48 @@ export default function Marketplace() {
       title: "Marketplace", buy: "Buy Inputs", sell: "Sell Produce", checkout: "Checkout & Finance", item: "Organic Manure", desc: "Nitrogen replenisher.",
       payTitle: "Select Payment Plan", full: "M-Pesa (Full)", install: "Installments", sacco: "SACCO Loan",
       depo: "Initial Deposit (KES)", mos: "Months", mthly: "Monthly Payment", confirmPay: "Confirm Payment", 
-      saccoList: "Available SACCOs", dispatch: "Dispatch Confirmed"
+      saccoList: "Available SACCOs", dispatch: "Dispatch Confirmed",
+      // New Translations
+      productsTitle: "Available Products",
+      sellFormTitle: "List Your Produce",
+      produceName: "Produce Name (e.g., Maize, Beans)",
+      quantity: "Quantity (Kg/Bags)",
+      price: "Expected Price (KES)",
+      listProduceBtn: "List for Sale",
+      sellSuccessMsg: "Produce listed successfully! Buyers can now contact you."
     },
     sw: { 
       title: "Soko Letu", buy: "Nunua Bidhaa", sell: "Uza Mazao", checkout: "Lipa au Mkopo", item: "Mbolea ya Kienyeji", desc: "Inaongeza naitrojeni.",
       payTitle: "Chagua Njia ya Kulipa", full: "M-Pesa Kamili", install: "Mdogo Mdogo", sacco: "Mkopo wa SACCO",
       depo: "Kianzio (KES)", mos: "Miezi", mthly: "Malipo ya Mwezi", confirmPay: "Thibitisha Malipo", 
-      saccoList: "SACCO Zinazopatikana", dispatch: "Mzigo Uko Njiani"
+      saccoList: "SACCO Zinazopatikana", dispatch: "Mzigo Uko Njiani",
+      // New Translations
+      productsTitle: "Bidhaa Zinazopatikana",
+      sellFormTitle: "Sajili Mazao Yako",
+      produceName: "Jina la Zao (mf. Mahindi, Maharagwe)",
+      quantity: "Kiasi (Kg/Magunia)",
+      price: "Bei Unayotaka (KES)",
+      listProduceBtn: "Weka Sokoni",
+      sellSuccessMsg: "Mazao yamewekwa sokoni kikamilifu! Wanunuzi watakutafuta."
     }
   };
+
+  const products = [
+    { id: 1, name: t[lang].item, desc: t[lang].desc, price: 4500, icon: <Leaf size={28} className="text-[#2E5A27]" /> },
+    { id: 2, name: lang === 'en' ? "Maize Seeds (Hybrid)" : "Mbegu za Mahindi", desc: lang === 'en' ? "Drought resistant variety." : "Inastahimili ukame vizuri.", price: 2200, icon: <PackageOpen size={28} className="text-[#2E5A27]" /> },
+    { id: 3, name: lang === 'en' ? "Dairy Meal" : "Chakula cha Ng'ombe", desc: lang === 'en' ? "Increases milk yield." : "Huongeza uzalishaji maziwa.", price: 3100, icon: <ShoppingCart size={28} className="text-[#2E5A27]" /> },
+  ];
 
   const handleConfirmPayment = () => {
     setShowFinanceModal(false);
     setLogisticsState("processing");
     setTimeout(() => { setLogisticsState("dispatched"); }, 2500);
+  };
+
+  const handleListProduce = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSellSuccess(true);
+    setTimeout(() => { setSellSuccess(false); }, 4000);
   };
 
   return (
@@ -66,20 +98,70 @@ export default function Marketplace() {
           </div>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="bg-white p-4 rounded-3xl border border-gray-200 shadow-sm flex items-center gap-4">
-            <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100"><Leaf size={28} className="text-[#2E5A27]" /></div>
-            <div className="flex-1">
-              <h3 className="font-black text-sm text-gray-900">{t[lang].item}</h3>
-              <p className="text-xs text-gray-500 font-medium mt-1">{t[lang].desc}</p>
-              <p className="font-black text-[#D4A373] mt-2 text-lg">KES {cartTotal}</p>
-            </div>
-          </div>
+        <>
+          {/* BUY TAB */}
+          {activeTab === "buy" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-left-4">
+              <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t[lang].productsTitle}</h2>
+              <div className="space-y-4">
+                {products.map((product) => (
+                  <div 
+                    key={product.id}
+                    onClick={() => {
+                      setCartTotal(product.price);
+                      setSelectedItemName(product.name);
+                    }}
+                    className={`bg-white p-4 rounded-3xl border-2 transition-all cursor-pointer shadow-sm flex items-center gap-4 ${cartTotal === product.price ? "border-[#2E5A27] bg-[#2E5A27]/5" : "border-gray-200"}`}
+                  >
+                    <div className="bg-[#FDFBF7] p-4 rounded-2xl border border-gray-100">{product.icon}</div>
+                    <div className="flex-1">
+                      <h3 className="font-black text-sm text-gray-900">{product.name}</h3>
+                      <p className="text-xs text-gray-500 font-medium mt-1">{product.desc}</p>
+                      <p className="font-black text-[#D4A373] mt-2 text-lg">KES {product.price}</p>
+                    </div>
+                    {cartTotal === product.price && <CheckCircle2 className="text-[#2E5A27] mr-2" />}
+                  </div>
+                ))}
+              </div>
 
-          <button onClick={() => setShowFinanceModal(true)} className="w-full bg-[#2E5A27] text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 mt-6 shadow-md">
-            {logisticsState === "processing" ? <Loader2 size={24} className="animate-spin" /> : <Wallet size={24} />} {t[lang].checkout}
-          </button>
-        </div>
+              <button onClick={() => setShowFinanceModal(true)} className="w-full bg-[#2E5A27] text-white font-black py-5 rounded-2xl flex items-center justify-center gap-3 mt-6 shadow-md">
+                {logisticsState === "processing" ? <Loader2 size={24} className="animate-spin" /> : <Wallet size={24} />} {t[lang].checkout} - {selectedItemName}
+              </button>
+            </div>
+          )}
+
+          {/* SELL TAB */}
+          {activeTab === "sell" && (
+            <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm animate-in fade-in slide-in-from-right-4">
+              <h2 className="text-xl font-black text-gray-900 mb-6">{t[lang].sellFormTitle}</h2>
+              
+              {sellSuccess ? (
+                <div className="bg-[#2E5A27]/10 border border-[#2E5A27]/20 p-6 rounded-2xl flex flex-col items-center text-center animate-in zoom-in-95">
+                  <CheckCircle2 size={48} className="text-[#2E5A27] mb-4" />
+                  <p className="text-[#2E5A27] font-bold">{t[lang].sellSuccessMsg}</p>
+                </div>
+              ) : (
+                <form onSubmit={handleListProduce} className="space-y-5">
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t[lang].produceName}</label>
+                    <input required type="text" className="w-full bg-[#FDFBF7] border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-900 mt-1 focus:outline-none focus:border-[#D4A373]" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t[lang].quantity}</label>
+                    <input required type="number" className="w-full bg-[#FDFBF7] border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-900 mt-1 focus:outline-none focus:border-[#D4A373]" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t[lang].price}</label>
+                    <input required type="number" className="w-full bg-[#FDFBF7] border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-900 mt-1 focus:outline-none focus:border-[#D4A373]" />
+                  </div>
+                  <button type="submit" className="w-full bg-[#D4A373] text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 shadow-md mt-4 hover:bg-[#c29161] transition-colors">
+                    <Upload size={20} /> {t[lang].listProduceBtn}
+                  </button>
+                </form>
+              )}
+            </div>
+          )}
+        </>
       )}
 
       {/* FINANCING & PAYMENT MODAL */}
@@ -137,7 +219,7 @@ export default function Marketplace() {
             )}
 
             <button onClick={handleConfirmPayment} className="w-full bg-gray-900 text-white font-black py-4 rounded-xl shadow-md">
-              {t[lang].confirmPay}
+              {t[lang].confirmPay} (KES {cartTotal})
             </button>
           </div>
         </div>
