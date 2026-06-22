@@ -19,6 +19,7 @@ export default function Marketplace() {
   const [cartTotal, setCartTotal] = useState(4500); 
   const [selectedItemName, setSelectedItemName] = useState("Organic Manure");
   const [sellSuccess, setSellSuccess] = useState(false);
+  const [produceCategory, setProduceCategory] = useState("crops");
 
   const monthlyPayment = Math.max(0, (cartTotal - deposit) / months).toFixed(0);
 
@@ -28,28 +29,34 @@ export default function Marketplace() {
       payTitle: "Select Payment Plan", full: "M-Pesa (Full)", install: "Installments", sacco: "SACCO Loan",
       depo: "Initial Deposit (KES)", mos: "Months", mthly: "Monthly Payment", confirmPay: "Confirm Payment", 
       saccoList: "Available SACCOs", dispatch: "Dispatch Confirmed",
-      // New Translations
       productsTitle: "Available Products",
       sellFormTitle: "List Your Produce",
-      produceName: "Produce Name (e.g., Maize, Beans)",
-      quantity: "Quantity (Kg/Bags)",
+      category: "Category",
+      catCrops: "Crops & Produce",
+      catAnimals: "Animals & Animal Produce",
+      catWaste: "Farm Waste (Biomass, Manure)",
+      produceName: "Item Name (e.g., Maize, Milk, Cow Dung)",
+      quantity: "Quantity (Kg/Liters/Bags)",
       price: "Expected Price (KES)",
       listProduceBtn: "List for Sale",
-      sellSuccessMsg: "Produce listed successfully! Buyers can now contact you."
+      sellSuccessMsg: "Item listed successfully! Buyers can now contact you."
     },
     sw: { 
       title: "Soko Letu", buy: "Nunua Bidhaa", sell: "Uza Mazao", checkout: "Lipa au Mkopo", item: "Mbolea ya Kienyeji", desc: "Inaongeza naitrojeni.",
       payTitle: "Chagua Njia ya Kulipa", full: "M-Pesa Kamili", install: "Mdogo Mdogo", sacco: "Mkopo wa SACCO",
       depo: "Kianzio (KES)", mos: "Miezi", mthly: "Malipo ya Mwezi", confirmPay: "Thibitisha Malipo", 
       saccoList: "SACCO Zinazopatikana", dispatch: "Mzigo Uko Njiani",
-      // New Translations
       productsTitle: "Bidhaa Zinazopatikana",
-      sellFormTitle: "Sajili Mazao Yako",
-      produceName: "Jina la Zao (mf. Mahindi, Maharagwe)",
-      quantity: "Kiasi (Kg/Magunia)",
+      sellFormTitle: "Sajili Bidhaa Zako",
+      category: "Aina ya Bidhaa",
+      catCrops: "Mazao ya Shambani",
+      catAnimals: "Wanyama na Mazao Yao",
+      catWaste: "Taka za Shambani (Mbolea, Mabaki)",
+      produceName: "Jina la Bidhaa (mf. Mahindi, Maziwa, Samadi)",
+      quantity: "Kiasi (Kg/Lita/Magunia)",
       price: "Bei Unayotaka (KES)",
       listProduceBtn: "Weka Sokoni",
-      sellSuccessMsg: "Mazao yamewekwa sokoni kikamilifu! Wanunuzi watakutafuta."
+      sellSuccessMsg: "Bidhaa imewekwa sokoni kikamilifu! Wanunuzi watakutafuta."
     }
   };
 
@@ -142,6 +149,18 @@ export default function Marketplace() {
                 </div>
               ) : (
                 <form onSubmit={handleListProduce} className="space-y-5">
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t[lang].category}</label>
+                    <select 
+                      value={produceCategory} 
+                      onChange={(e) => setProduceCategory(e.target.value)} 
+                      className="w-full bg-[#FDFBF7] border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-900 mt-1 focus:outline-none focus:border-[#D4A373]"
+                    >
+                      <option value="crops">{t[lang].catCrops}</option>
+                      <option value="animals">{t[lang].catAnimals}</option>
+                      <option value="waste">{t[lang].catWaste}</option>
+                    </select>
+                  </div>
                   <div>
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t[lang].produceName}</label>
                     <input required type="text" className="w-full bg-[#FDFBF7] border border-gray-200 rounded-xl px-4 py-3 font-bold text-gray-900 mt-1 focus:outline-none focus:border-[#D4A373]" />
