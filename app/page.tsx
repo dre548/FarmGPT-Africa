@@ -28,8 +28,8 @@ export default function LandingPage() {
         <div className="w-32 h-32 bg-white rounded-3xl shadow-sm flex items-center justify-center mb-6 mx-auto border-2 border-[#2E5A27] p-4">
           <img src="/logo-light.png" alt="FarmGPT Logo" className="w-full h-full object-contain" />
         </div>
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight">FarmGPT Africa</h1>
-        <p className="text-[#D4A373] font-bold tracking-widest uppercase text-xs mt-2">Shamba Smart APP</p>
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Shamba Smart APP</h1>
+        <p className="text-[#D4A373] font-bold tracking-widest uppercase text-xs mt-2">FarmGPT Africa</p>
         <p className="text-gray-500 text-sm font-medium mt-4 px-4 leading-relaxed">
           {t[lang].subtitle}
         </p>
